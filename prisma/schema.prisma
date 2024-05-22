@@ -16,17 +16,20 @@ datasource db {
 model User {
   id        String      @id @default(uuid())
   name      String
-  username String
+  username String       @unique
   email     String      @unique
   password  String
-  passwordChangeAt DateTime
-  role UserRole
-  status UserStatus
-  photoURL String
-  phone String
+  passwordChangeAt DateTime?
+  role UserRole @default(user)
+  status UserStatus @default(activate)
+  photoURL String?
+  phone String?
   createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  lostItem LostItem[]
+  updatedAt DateTime?
+  lostItems LostItem[]
+  foundItems FoundItem[]
+  claimItems ClaimItem[]
+  
 
   @@map("users")
 }
@@ -40,12 +43,56 @@ model LostItem {
   category String
   brand String
   isFound Boolean @default(false)
+  foundAt DateTime?
   lostDate DateTime?
-  lostLocation DateTime?
+  lostLocation String?
   images String[]
-  email String
-  phone String
-  username String
+  email String?
+  phone String?
+  username String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
+
+  @@map("lost_items")
+}
+
+model FoundItem {
+  id        String      @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  title String
+  description String
+  category String
+  brand String
+  giveToOwner Boolean @default(false)
+  lostDate DateTime?
+  lostLocation String?
+  images String[]
+  username String?
+  email String?
+  phone String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
+  claimItems ClaimItem[]
+
+  @@map("found_items")
+}
+
+model ClaimItem {
+  id        String      @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  itemId String
+  item FoundItem @relation(fields: [itemId], references: [id])
+  description String
+  productInvoice String
+  images String[]
+  status ClaimStatus @default(pending)
+  statusUpdateAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
+
+  @@map("claim_items")
 }
 
 enum UserRole {
@@ -56,5 +103,11 @@ enum UserRole {
 enum UserStatus {
   activate
   deactivate
+}
+
+enum ClaimStatus {
+  pending
+  approved
+  rejected
 }
 
