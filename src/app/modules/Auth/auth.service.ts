@@ -7,6 +7,14 @@ import { TChangePassword, TLoginUser, TRegisterUser } from "./auth.interface";
 import bcrypt from "bcrypt";
 
 const registerUser = async (payload: TRegisterUser) => {
+  if (await prisma.user.findFirst({ where: { username: payload.username } })) {
+    throw new AppError(400, "username already exist");
+  }
+
+  if (await prisma.user.findFirst({ where: { email: payload.email } })) {
+    throw new AppError(400, "email already exist");
+  }
+
   const hashedPassword = await bcrypt.hash(
     payload.password,
     Number(config.BCRYPT_SALT_ROUNDS),

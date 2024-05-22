@@ -1,10 +1,11 @@
+import { UserRole } from "@prisma/client";
 import config from "../../config";
 import AppError from "../errors/AppError";
 import jwtHelper from "../helpers/jwtHelper";
 import catchAsyncHandler from "../utils/catchAsyncHandler";
 import { prisma } from "../utils/prisma";
 
-const auth = () => {
+const auth = (...roles: UserRole[]) => {
   return catchAsyncHandler(async (req, res, next) => {
     const token = req.headers.authorization;
 
@@ -25,6 +26,10 @@ const auth = () => {
 
     if (!user) {
       throw new AppError(401, "You are not authorized!");
+    }
+
+    if (roles.length && !roles.includes(user.role)) {
+      throw new AppError(403, "You have no permission to access this route!");
     }
 
     req.user = decodeUser;
