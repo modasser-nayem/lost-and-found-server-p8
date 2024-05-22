@@ -28,7 +28,7 @@ const getMyFoundItems = catchAsyncHandler(async (req, res) => {
 });
 
 const getAllFoundItems = catchAsyncHandler(async (req, res) => {
-  const result = await foundItemServices.getAllFoundItems(req.body);
+  const result = await foundItemServices.getAllFoundItems();
 
   sendResponse(res, {
     statusCode: 200,
@@ -39,7 +39,9 @@ const getAllFoundItems = catchAsyncHandler(async (req, res) => {
 });
 
 const getSingleFoundItems = catchAsyncHandler(async (req, res) => {
-  const result = await foundItemServices.getSingleFoundItems(req.body);
+  const result = await foundItemServices.getSingleFoundItems({
+    foundItemId: req.params.id,
+  });
 
   sendResponse(res, {
     statusCode: 200,
@@ -50,7 +52,11 @@ const getSingleFoundItems = catchAsyncHandler(async (req, res) => {
 });
 
 const updateFoundItem = catchAsyncHandler(async (req, res) => {
-  const result = await foundItemServices.updateFoundItem(req.body);
+  const result = await foundItemServices.updateFoundItem({
+    user: req.user,
+    foundItemId: req.params.id,
+    data: req.body,
+  });
 
   sendResponse(res, {
     statusCode: 200,
@@ -61,7 +67,10 @@ const updateFoundItem = catchAsyncHandler(async (req, res) => {
 });
 
 const deleteFoundItem = catchAsyncHandler(async (req, res) => {
-  const result = await foundItemServices.deleteFoundItem(req.body);
+  const result = await foundItemServices.deleteFoundItem({
+    user: req.user,
+    foundItemId: req.params.id,
+  });
 
   sendResponse(res, {
     statusCode: 200,
