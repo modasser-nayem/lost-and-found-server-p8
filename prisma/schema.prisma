@@ -44,8 +44,8 @@ model LostItem {
   brand String
   isFound Boolean @default(false)
   foundAt DateTime?
-  lostDate DateTime?
-  lostLocation String?
+  lostDate DateTime
+  lostLocation String
   images String[]
   email String?
   phone String?
@@ -65,8 +65,8 @@ model FoundItem {
   category String
   brand String
   giveToOwner Boolean @default(false)
-  lostDate DateTime?
-  lostLocation String?
+  foundDate DateTime
+  foundLocation String
   images String[]
   username String?
   email String?

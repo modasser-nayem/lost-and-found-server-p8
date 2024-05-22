@@ -3,7 +3,10 @@ import sendResponse from "../../utils/sendResponse";
 import foundItemServices from "./foundItem.service";
 
 const reportFoundItem = catchAsyncHandler(async (req, res) => {
-  const result = await foundItemServices.reportFoundItem(req.body);
+  const result = await foundItemServices.reportFoundItem({
+    user: req.user,
+    data: req.body,
+  });
 
   sendResponse(res, {
     statusCode: 201,
@@ -14,7 +17,7 @@ const reportFoundItem = catchAsyncHandler(async (req, res) => {
 });
 
 const getMyFoundItems = catchAsyncHandler(async (req, res) => {
-  const result = await foundItemServices.getMyFoundItems(req.body);
+  const result = await foundItemServices.getMyFoundItems({ user: req.user });
 
   sendResponse(res, {
     statusCode: 200,
