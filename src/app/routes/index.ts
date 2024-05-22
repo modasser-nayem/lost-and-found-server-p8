@@ -2,6 +2,7 @@ import { Router } from "express";
 import authRoutes from "../modules/Auth/auth.routes";
 import userRoutes from "../modules/User/user.routes";
 import lostItemRoutes from "../modules/LostItem/lostItem.routes";
+import foundItemRoutes from "../modules/FoundItem/foundItem.routes";
 
 const router = Router();
 
@@ -17,6 +18,10 @@ const moduleRoutes = [
   {
     path: "/lost-items",
     routes: lostItemRoutes,
+  },
+  {
+    path: "/found-items",
+    routes: foundItemRoutes,
   },
 ];
 
