@@ -27,12 +27,6 @@ const createClaimRequest = z.object({
 
 const updateClaimRequest = z.object({
   body: z.object({
-    itemId: z
-      .string()
-      .refine((value) => value !== "", {
-        message: "item id is required",
-      })
-      .optional(),
     description: z
       .string()
       .refine((value) => value !== "", {
