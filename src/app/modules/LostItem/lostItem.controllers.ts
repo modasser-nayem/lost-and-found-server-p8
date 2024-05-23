@@ -3,7 +3,10 @@ import sendResponse from "../../utils/sendResponse";
 import lostItemServices from "./lostItem.service";
 
 const reportLostItem = catchAsyncHandler(async (req, res) => {
-  const result = await lostItemServices.reportLostItem(req.body);
+  const result = await lostItemServices.reportLostItem({
+    user: req.user,
+    data: req.body,
+  });
 
   sendResponse(res, {
     statusCode: 201,
@@ -14,7 +17,9 @@ const reportLostItem = catchAsyncHandler(async (req, res) => {
 });
 
 const getMyLostItems = catchAsyncHandler(async (req, res) => {
-  const result = await lostItemServices.getMyLostItems(req.body);
+  const result = await lostItemServices.getMyLostItems({
+    user: req.user,
+  });
 
   sendResponse(res, {
     statusCode: 200,
@@ -25,7 +30,7 @@ const getMyLostItems = catchAsyncHandler(async (req, res) => {
 });
 
 const getAllLostItems = catchAsyncHandler(async (req, res) => {
-  const result = await lostItemServices.getAllLostItems(req.body);
+  const result = await lostItemServices.getAllLostItems();
 
   sendResponse(res, {
     statusCode: 200,
@@ -36,7 +41,9 @@ const getAllLostItems = catchAsyncHandler(async (req, res) => {
 });
 
 const getSingleLostItems = catchAsyncHandler(async (req, res) => {
-  const result = await lostItemServices.getSingleLostItems(req.body);
+  const result = await lostItemServices.getSingleLostItems({
+    lostItemId: req.params.id,
+  });
 
   sendResponse(res, {
     statusCode: 200,
@@ -47,7 +54,11 @@ const getSingleLostItems = catchAsyncHandler(async (req, res) => {
 });
 
 const updateLostItem = catchAsyncHandler(async (req, res) => {
-  const result = await lostItemServices.updateLostItem(req.body);
+  const result = await lostItemServices.updateLostItem({
+    user: req.user,
+    lostItemId: req.params.id,
+    data: req.body,
+  });
 
   sendResponse(res, {
     statusCode: 200,
