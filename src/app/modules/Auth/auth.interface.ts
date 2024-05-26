@@ -1,14 +1,15 @@
 export type TRegisterUser = {
-  name: string;
+  name?: string;
   username: string;
   email: string;
   password: string;
+  confirmPassword: string;
   photoURL?: string;
   phone?: string;
 };
 
 export type TLoginUser = {
-  email: string;
+  emailOrUsername: string;
   password: string;
 };
 

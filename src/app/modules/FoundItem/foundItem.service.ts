@@ -42,14 +42,63 @@ const getMyFoundItems = async (payload: { user: JwtPayload }) => {
       title: true,
       category: true,
       brand: true,
+      foundDate: true,
+      foundLocation: true,
+      giveToOwner: true,
+      createdAt: true,
+      updatedAt: true,
+      _count: { select: { claimItems: true } },
+    },
+  });
+
+  return result;
+};
+
+const getMySingleFoundItem = async (payload: { foundItemId: string }) => {
+  const result = await prisma.foundItem.findUnique({
+    where: {
+      id: payload.foundItemId,
+    },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      category: true,
+      brand: true,
       images: true,
       foundDate: true,
       foundLocation: true,
-      username: true,
-      email: true,
+      giveToOwner: true,
       createdAt: true,
+      updatedAt: true,
+      _count: {
+        select: { claimItems: true },
+      },
+      claimItems: {
+        select: {
+          id: true,
+          description: true,
+          productInvoice: true,
+          status: true,
+          statusUpdateAt: true,
+          createdAt: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              photoURL: true,
+              phone: true,
+            },
+          },
+        },
+      },
     },
   });
+
+  if (!result) {
+    throw new AppError(404, "Found item not found!");
+  }
 
   return result;
 };
@@ -64,12 +113,19 @@ const getAllFoundItems = async () => {
       title: true,
       category: true,
       brand: true,
-      images: true,
       foundDate: true,
       foundLocation: true,
-      username: true,
-      email: true,
       createdAt: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          photoURL: true,
+        },
+      },
+      _count: {
+        select: { claimItems: true },
+      },
     },
   });
 
@@ -94,6 +150,9 @@ const getSingleFoundItems = async (payload: { foundItemId: string }) => {
       email: true,
       phone: true,
       createdAt: true,
+      _count: {
+        select: { claimItems: true },
+      },
     },
   });
 
@@ -166,6 +225,7 @@ const deleteFoundItem = async (payload: {
 const foundItemServices = {
   reportFoundItem,
   getMyFoundItems,
+  getMySingleFoundItem,
   getAllFoundItems,
   getSingleFoundItems,
   updateFoundItem,

@@ -11,6 +11,8 @@ const reportLostItem = async (payload: {
 }) => {
   payload.data.userId = payload.user.id;
 
+  console.log(payload.data);
+
   const result = await prisma.lostItem.create({
     data: payload.data,
     select: {
@@ -46,8 +48,7 @@ const getMyLostItems = async (payload: { user: JwtPayload }) => {
       lostDate: true,
       lostLocation: true,
       isFound: true,
-      username: true,
-      email: true,
+      foundAt: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -58,19 +59,19 @@ const getMyLostItems = async (payload: { user: JwtPayload }) => {
 
 const getAllLostItems = async () => {
   const result = await prisma.lostItem.findMany({
-    where: {
-      isFound: false,
-    },
+    // where: {
+    //   isFound: false,
+    // },
     select: {
       id: true,
       title: true,
+      description: true,
       category: true,
       brand: true,
+      isFound: true,
       images: true,
       lostDate: true,
       lostLocation: true,
-      username: true,
-      email: true,
       createdAt: true,
     },
   });
@@ -92,10 +93,13 @@ const getSingleLostItems = async (payload: { lostItemId: string }) => {
       images: true,
       lostDate: true,
       lostLocation: true,
+      foundAt: true,
+      isFound: true,
       username: true,
       email: true,
       phone: true,
       createdAt: true,
+      updatedAt: true,
     },
   });
 

@@ -17,6 +17,9 @@ router.post(
 // Get my found items
 router.get("/my", auth(), foundItemControllers.getMyFoundItems);
 
+// Get my single found item
+router.get("/my/:id", auth(), foundItemControllers.getMySingleFoundItem);
+
 // Get all found items
 router.get("/", foundItemControllers.getAllFoundItems);
 

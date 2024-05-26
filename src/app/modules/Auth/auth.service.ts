@@ -7,23 +7,27 @@ import { TChangePassword, TLoginUser, TRegisterUser } from "./auth.interface";
 import bcrypt from "bcrypt";
 
 const registerUser = async (payload: TRegisterUser) => {
-  if (await prisma.user.findFirst({ where: { username: payload.username } })) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { confirmPassword, ...data } = payload;
+
+  if (await prisma.user.findFirst({ where: { username: data.username } })) {
     throw new AppError(400, "username already exist");
   }
 
-  if (await prisma.user.findFirst({ where: { email: payload.email } })) {
+  if (await prisma.user.findFirst({ where: { email: data.email } })) {
     throw new AppError(400, "email already exist");
   }
 
   const hashedPassword = await bcrypt.hash(
-    payload.password,
+    data.password,
     Number(config.BCRYPT_SALT_ROUNDS),
   );
 
-  payload.password = hashedPassword;
+  data.password = hashedPassword;
+  data.name = data.username;
 
   const result = await prisma.user.create({
-    data: payload,
+    data: data,
   });
 
   const jwtPayload = {
@@ -41,11 +45,18 @@ const registerUser = async (payload: TRegisterUser) => {
 };
 
 const loginUser = async (payload: TLoginUser) => {
-  const user = await prisma.user.findUniqueOrThrow({
+  const user = await prisma.user.findFirst({
     where: {
-      email: payload.email,
+      OR: [
+        { email: payload.emailOrUsername },
+        { username: payload.emailOrUsername },
+      ],
     },
   });
+
+  if (!user) {
+    throw new AppError(404, "User not found!");
+  }
 
   if (!(await bcrypt.compare(payload.password, user.password))) {
     throw new AppError(400, "Password is wrong!");

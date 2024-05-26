@@ -27,6 +27,19 @@ const getMyFoundItems = catchAsyncHandler(async (req, res) => {
   });
 });
 
+const getMySingleFoundItem = catchAsyncHandler(async (req, res) => {
+  const result = await foundItemServices.getMySingleFoundItem({
+    foundItemId: req.params.id,
+  });
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Successfully retrieved found item",
+    data: result,
+  });
+});
+
 const getAllFoundItems = catchAsyncHandler(async (req, res) => {
   const result = await foundItemServices.getAllFoundItems();
 
@@ -83,6 +96,7 @@ const deleteFoundItem = catchAsyncHandler(async (req, res) => {
 const foundItemControllers = {
   reportFoundItem,
   getMyFoundItems,
+  getMySingleFoundItem,
   getAllFoundItems,
   getSingleFoundItems,
   updateFoundItem,
