@@ -11,8 +11,6 @@ const reportLostItem = async (payload: {
 }) => {
   payload.data.userId = payload.user.id;
 
-  console.log(payload.data);
-
   const result = await prisma.lostItem.create({
     data: payload.data,
     select: {
@@ -59,17 +57,15 @@ const getMyLostItems = async (payload: { user: JwtPayload }) => {
 
 const getAllLostItems = async () => {
   const result = await prisma.lostItem.findMany({
-    // where: {
-    //   isFound: false,
-    // },
+    where: {
+      isFound: false,
+    },
     select: {
       id: true,
       title: true,
       description: true,
       category: true,
       brand: true,
-      isFound: true,
-      images: true,
       lostDate: true,
       lostLocation: true,
       createdAt: true,
@@ -79,7 +75,7 @@ const getAllLostItems = async () => {
   return result;
 };
 
-const getSingleLostItems = async (payload: { lostItemId: string }) => {
+const getSingleLostItem = async (payload: { lostItemId: string }) => {
   const result = await prisma.lostItem.findUnique({
     where: {
       id: payload.lostItemId,
@@ -151,6 +147,34 @@ const updateLostItem = async (payload: {
   return result;
 };
 
+const markAsFoundLostItem = async (payload: {
+  user: JwtPayload;
+  lostItemId: string;
+}) => {
+  const result = await prisma.lostItem.findUnique({
+    where: {
+      id: payload.lostItemId,
+      userId: payload.user.id,
+    },
+  });
+
+  if (!result) {
+    throw new AppError(404, "Item not found!");
+  }
+
+  await prisma.lostItem.update({
+    where: {
+      id: result.id,
+    },
+    data: {
+      isFound: result.isFound === false ? true : false,
+      foundAt: result.isFound === false ? new Date().toISOString() : null,
+    },
+  });
+
+  return null;
+};
+
 const deleteLostItem = async (payload: {
   user: JwtPayload;
   lostItemId: string;
@@ -166,6 +190,8 @@ const deleteLostItem = async (payload: {
     throw new AppError(404, "Item not found!");
   }
 
+  await prisma.lostItem.delete({ where: { id: result.id } });
+
   return null;
 };
 
@@ -173,8 +199,9 @@ const lostItemServices = {
   reportLostItem,
   getMyLostItems,
   getAllLostItems,
-  getSingleLostItems,
+  getSingleLostItem,
   updateLostItem,
+  markAsFoundLostItem,
   deleteLostItem,
 };
 export default lostItemServices;

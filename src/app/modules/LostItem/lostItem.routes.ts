@@ -32,7 +32,7 @@ router.put(
 );
 
 // Update lost item found status
-router.patch("/:id", auth(), lostItemControllers.updateLostItem);
+router.patch("/:id", auth(), lostItemControllers.markAsFoundLostItem);
 
 // delete lost item
 router.delete("/:id", auth(), lostItemControllers.deleteLostItem);

@@ -8,7 +8,19 @@ const reportFoundItem = z.object({
     brand: z.string({ required_error: "brand is required" }),
     foundDate: z.string({ required_error: "foundDate is required" }),
     foundLocation: z.string({ required_error: "foundLocation is required" }),
-    images: z.array(z.string()).optional(),
+    images: z
+      .array(z.string())
+      .optional()
+      .refine(
+        (value) => {
+          if (value && value.length > 3) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        { message: "Can't select more then 3 image" },
+      ),
     username: z.string().optional(),
     email: z.string(),
     phone: z.string().optional(),

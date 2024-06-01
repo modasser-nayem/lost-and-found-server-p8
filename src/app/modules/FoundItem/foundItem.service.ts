@@ -74,25 +74,6 @@ const getMySingleFoundItem = async (payload: { foundItemId: string }) => {
       _count: {
         select: { claimItems: true },
       },
-      claimItems: {
-        select: {
-          id: true,
-          description: true,
-          productInvoice: true,
-          status: true,
-          statusUpdateAt: true,
-          createdAt: true,
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              photoURL: true,
-              phone: true,
-            },
-          },
-        },
-      },
     },
   });
 
@@ -208,16 +189,30 @@ const deleteFoundItem = async (payload: {
   user: JwtPayload;
   foundItemId: string;
 }) => {
-  const result = await prisma.foundItem.findUnique({
+  const foundItem = await prisma.foundItem.findUnique({
     where: {
       id: payload.foundItemId,
       userId: payload.user.id,
     },
   });
 
-  if (!result) {
+  if (!foundItem) {
     throw new AppError(404, "Item not found!");
   }
+
+  await prisma.$transaction(async (trans) => {
+    const deleteResult = await trans.foundItem.delete({
+      where: { id: foundItem.id },
+    });
+
+    await trans.claimItem.deleteMany({
+      where: {
+        itemId: deleteResult.id,
+      },
+    });
+
+    return null;
+  });
 
   return null;
 };

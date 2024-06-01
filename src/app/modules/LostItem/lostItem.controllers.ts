@@ -41,7 +41,7 @@ const getAllLostItems = catchAsyncHandler(async (req, res) => {
 });
 
 const getSingleLostItems = catchAsyncHandler(async (req, res) => {
-  const result = await lostItemServices.getSingleLostItems({
+  const result = await lostItemServices.getSingleLostItem({
     lostItemId: req.params.id,
   });
 
@@ -68,8 +68,25 @@ const updateLostItem = catchAsyncHandler(async (req, res) => {
   });
 });
 
+const markAsFoundLostItem = catchAsyncHandler(async (req, res) => {
+  const result = await lostItemServices.markAsFoundLostItem({
+    user: req.user,
+    lostItemId: req.params.id,
+  });
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Update found status",
+    data: result,
+  });
+});
+
 const deleteLostItem = catchAsyncHandler(async (req, res) => {
-  const result = await lostItemServices.deleteLostItem(req.body);
+  const result = await lostItemServices.deleteLostItem({
+    user: req.user,
+    lostItemId: req.params.id,
+  });
 
   sendResponse(res, {
     statusCode: 200,
@@ -85,6 +102,7 @@ const lostItemControllers = {
   getAllLostItems,
   getSingleLostItems,
   updateLostItem,
+  markAsFoundLostItem,
   deleteLostItem,
 };
 export default lostItemControllers;

@@ -24,9 +24,17 @@ const getMyProfile = async (payload: { user: JwtPayload }) => {
       createdAt: true,
       updatedAt: true,
       status: true,
-      _count: true,
+      _count: {
+        select: {
+          foundItems: true,
+          lostItems: true,
+          claimItems: {
+            where: { status: "approved" },
+          },
+        },
+      },
       lostItems: {
-        take: 3,
+        take: 4,
         select: {
           id: true,
           title: true,
@@ -41,7 +49,7 @@ const getMyProfile = async (payload: { user: JwtPayload }) => {
         },
       },
       foundItems: {
-        take: 3,
+        take: 4,
         select: {
           id: true,
           title: true,
@@ -55,7 +63,7 @@ const getMyProfile = async (payload: { user: JwtPayload }) => {
         },
       },
       claimItems: {
-        take: 3,
+        take: 4,
         select: {
           id: true,
           createdAt: true,

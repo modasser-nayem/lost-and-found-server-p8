@@ -10,6 +10,22 @@ const createClaimRequest = async (payload: {
 }) => {
   payload.data.userId = payload.user.id;
 
+  const foundItem = await prisma.foundItem.findUnique({
+    where: { id: payload.data.itemId },
+  });
+
+  if (!foundItem) {
+    throw new AppError(404, "Item not found!");
+  }
+
+  if (foundItem.userId === payload.user.id) {
+    throw new AppError(400, "You can't claim own found item");
+  }
+
+  if (foundItem.giveToOwner) {
+    throw new AppError(400, "Owner claim his product");
+  }
+
   const result = await prisma.claimItem.create({
     data: payload.data,
     select: {
@@ -116,12 +132,14 @@ const updateClaimStatus = async (payload: {
 };
 
 const getMyClaimRequests = async (payload: { user: JwtPayload }) => {
+  console.log("yes");
   const result = await prisma.claimItem.findMany({
     where: {
       userId: payload.user.id,
     },
     select: {
       id: true,
+      description: true,
       createdAt: true,
       status: true,
       statusUpdateAt: true,
@@ -191,9 +209,10 @@ const getClaimRequestsByFoundItemId = async (payload: {
     },
     select: {
       id: true,
-      createdAt: true,
+      description: true,
       status: true,
       statusUpdateAt: true,
+      createdAt: true,
       user: {
         select: {
           id: true,
@@ -201,12 +220,6 @@ const getClaimRequestsByFoundItemId = async (payload: {
           email: true,
           phone: true,
           photoURL: true,
-        },
-      },
-      item: {
-        select: {
-          id: true,
-          title: true,
         },
       },
     },
