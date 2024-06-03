@@ -47,13 +47,19 @@ const updateClaimStatus = catchAsyncHandler(async (req, res) => {
 });
 
 const getMyClaimRequests = catchAsyncHandler(async (req, res) => {
-  const result = await claimItemServices.getMyClaimRequests({ user: req.user });
+  const result = await claimItemServices.getMyClaimRequests({
+    user: req.user,
+    query: {
+      pagination: req.query,
+    },
+  });
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "Successfully retrieved claim requests",
-    data: result,
+    meta: result.meta,
+    data: result.data,
   });
 });
 

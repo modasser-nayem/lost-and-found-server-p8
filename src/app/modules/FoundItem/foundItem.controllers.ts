@@ -17,13 +17,19 @@ const reportFoundItem = catchAsyncHandler(async (req, res) => {
 });
 
 const getMyFoundItems = catchAsyncHandler(async (req, res) => {
-  const result = await foundItemServices.getMyFoundItems({ user: req.user });
+  const result = await foundItemServices.getMyFoundItems({
+    user: req.user,
+    query: {
+      pagination: req.query,
+    },
+  });
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "Successfully retrieved my found items",
-    data: result,
+    data: result.data,
+    meta: result.meta,
   });
 });
 
@@ -41,13 +47,18 @@ const getMySingleFoundItem = catchAsyncHandler(async (req, res) => {
 });
 
 const getAllFoundItems = catchAsyncHandler(async (req, res) => {
-  const result = await foundItemServices.getAllFoundItems();
+  const result = await foundItemServices.getAllFoundItems({
+    query: {
+      pagination: req.query,
+    },
+  });
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "Successfully retrieved all found items",
-    data: result,
+    meta: result.meta,
+    data: result.data,
   });
 });
 

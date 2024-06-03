@@ -19,24 +19,33 @@ const reportLostItem = catchAsyncHandler(async (req, res) => {
 const getMyLostItems = catchAsyncHandler(async (req, res) => {
   const result = await lostItemServices.getMyLostItems({
     user: req.user,
+    query: {
+      pagination: req.query,
+    },
   });
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "Successfully retrieved my lost items",
-    data: result,
+    meta: result.meta,
+    data: result.data,
   });
 });
 
 const getAllLostItems = catchAsyncHandler(async (req, res) => {
-  const result = await lostItemServices.getAllLostItems();
+  const result = await lostItemServices.getAllLostItems({
+    query: {
+      pagination: req.query,
+    },
+  });
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "Successfully retrieved all lost items",
-    data: result,
+    meta: result.meta,
+    data: result.data,
   });
 });
 

@@ -3,6 +3,8 @@ import { TClaimRequest } from "./claimItem.interface";
 import { prisma } from "../../utils/prisma";
 import AppError from "../../errors/AppError";
 import { ClaimStatus } from "@prisma/client";
+import { TMeta, TPaginationQuery } from "../../interface/pagination";
+import { pagination } from "../../utils/pagination";
 
 const createClaimRequest = async (payload: {
   user: JwtPayload;
@@ -106,10 +108,6 @@ const updateClaimStatus = async (payload: {
     throw new AppError(403, "You have no permission for this route");
   }
 
-  if (payload.data.status === "pending") {
-    throw new AppError(400, `Status can't be update to pending`);
-  }
-
   await prisma.$transaction(async (trans) => {
     const updateResult = await trans.claimItem.update({
       where: {
@@ -131,15 +129,25 @@ const updateClaimStatus = async (payload: {
   return null;
 };
 
-const getMyClaimRequests = async (payload: { user: JwtPayload }) => {
-  console.log("yes");
+const getMyClaimRequests = async (payload: {
+  user: JwtPayload;
+  query: { pagination: TPaginationQuery };
+}) => {
+  const { page, limit, skip, sortBy, sortOrder } = pagination(
+    payload.query.pagination,
+  );
+
   const result = await prisma.claimItem.findMany({
     where: {
       userId: payload.user.id,
     },
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
+    skip: skip,
+    take: limit,
     select: {
       id: true,
-      description: true,
       createdAt: true,
       status: true,
       statusUpdateAt: true,
@@ -154,7 +162,13 @@ const getMyClaimRequests = async (payload: { user: JwtPayload }) => {
     },
   });
 
-  return result;
+  const meta: TMeta = {
+    page,
+    limit,
+    total: result.length,
+  };
+
+  return { data: result, meta: meta };
 };
 
 const getSingleClaimRequest = async (payload: { claimId: string }) => {

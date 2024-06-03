@@ -7,6 +7,10 @@
 <br/>
 <!-- ABOUT THE PROJECT -->
 
+## About
+
+The Lost & Found website is a community-driven platform designed to help individuals report and reclaim lost items. By facilitating the reporting of both lost and found items, the website aims to create a seamless process for reuniting people with their belongings. The platform includes user-friendly features for reporting items, verifying ownership, and managing user profiles, with additional administrative tools for overseeing site activity and user management.
+
 ## API Documentation
 
 I used postman to do api documentation. Click the link below to view the api documentation.
@@ -17,22 +21,62 @@ I used postman to do api documentation. Click the link below to view the api doc
 
 ### Auth
 
+- register user
+- login user
+- change password
+
 ### User
+
+- get my profile
+- get all users
+- get single user
+- update my profile
+- update user role
+- update user status
+- delete user
 
 ### Lost item
 
+- report lost item
+- update lost item
+- get my lost items
+- get all lost items
+- get single lost item
+- mark as found item
+- delete lost item
+
 ### Found item
 
+- report found item
+- get my found items
+- get my single found items
+- get all found items
+- get single found items
+- update found item
+- delete found item
+
 ### Claim item
+
+- send claim request
+- update claim request
+- update claim request status
+- get my claim request
+- get single claim request
+- get claim requests by found id
+- delete claim request
+
+### Reports
+
+- total item count report
 
 ## Getting Started
 
 ### 1. Clone the repository:
 
 ```
-git clone https://github.com/Porgramming-Hero-web-course/l2-b2-fullstack-track-assignment-8-modasser-nayem
+git clone https://github.com/modasser-nayem/lost-and-found-server-p8.git
 
-cd l2-b2-fullstack-track-assignment-8-modasser-nayem
+cd lost-and-found-server-p8
 ```
 
 ### 2. Install Dependencies:

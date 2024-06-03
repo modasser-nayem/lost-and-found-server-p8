@@ -4,6 +4,8 @@ import { JwtPayload } from "jsonwebtoken";
 import { TReportFoundItem } from "./foundItem.interface";
 import { prisma } from "../../utils/prisma";
 import AppError from "../../errors/AppError";
+import { pagination } from "../../utils/pagination";
+import { TMeta, TPaginationQuery } from "../../interface/pagination";
 
 const reportFoundItem = async (payload: {
   user: JwtPayload;
@@ -32,11 +34,23 @@ const reportFoundItem = async (payload: {
   return result;
 };
 
-const getMyFoundItems = async (payload: { user: JwtPayload }) => {
+const getMyFoundItems = async (payload: {
+  user: JwtPayload;
+  query: { pagination: TPaginationQuery };
+}) => {
+  const { page, limit, skip, sortBy, sortOrder } = pagination(
+    payload.query.pagination,
+  );
+
   const result = await prisma.foundItem.findMany({
     where: {
       userId: payload.user.id,
     },
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
+    skip: skip,
+    take: limit,
     select: {
       id: true,
       title: true,
@@ -44,14 +58,19 @@ const getMyFoundItems = async (payload: { user: JwtPayload }) => {
       brand: true,
       foundDate: true,
       foundLocation: true,
-      giveToOwner: true,
       createdAt: true,
-      updatedAt: true,
+      giveToOwner: true,
       _count: { select: { claimItems: true } },
     },
   });
 
-  return result;
+  const meta: TMeta = {
+    page,
+    limit,
+    total: result.length,
+  };
+
+  return { data: result, meta: meta };
 };
 
 const getMySingleFoundItem = async (payload: { foundItemId: string }) => {
@@ -84,11 +103,22 @@ const getMySingleFoundItem = async (payload: { foundItemId: string }) => {
   return result;
 };
 
-const getAllFoundItems = async () => {
+const getAllFoundItems = async (payload: {
+  query: { pagination: TPaginationQuery };
+}) => {
+  const { page, limit, skip, sortBy, sortOrder } = pagination(
+    payload.query.pagination,
+  );
+
   const result = await prisma.foundItem.findMany({
     where: {
       giveToOwner: false,
     },
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
+    skip: skip,
+    take: limit,
     select: {
       id: true,
       title: true,
@@ -110,7 +140,13 @@ const getAllFoundItems = async () => {
     },
   });
 
-  return result;
+  const meta: TMeta = {
+    page,
+    limit,
+    total: result.length,
+  };
+
+  return { data: result, meta: meta };
 };
 
 const getSingleFoundItems = async (payload: { foundItemId: string }) => {

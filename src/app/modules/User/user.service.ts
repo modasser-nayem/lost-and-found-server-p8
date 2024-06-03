@@ -33,52 +33,6 @@ const getMyProfile = async (payload: { user: JwtPayload }) => {
           },
         },
       },
-      lostItems: {
-        take: 4,
-        select: {
-          id: true,
-          title: true,
-          category: true,
-          brand: true,
-          lostDate: true,
-          lostLocation: true,
-          isFound: true,
-          foundAt: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      },
-      foundItems: {
-        take: 4,
-        select: {
-          id: true,
-          title: true,
-          category: true,
-          brand: true,
-          foundDate: true,
-          foundLocation: true,
-          createdAt: true,
-          giveToOwner: true,
-          _count: true,
-        },
-      },
-      claimItems: {
-        take: 4,
-        select: {
-          id: true,
-          createdAt: true,
-          status: true,
-          statusUpdateAt: true,
-          item: {
-            select: {
-              id: true,
-              title: true,
-              foundDate: true,
-              foundLocation: true,
-            },
-          },
-        },
-      },
     },
   });
 
@@ -146,12 +100,22 @@ const updateMyProfile = async (payload: {
   }
 
   if (
-    await prisma.user.findFirst({ where: { username: payload.data.username } })
+    await prisma.user.findFirst({
+      where: {
+        AND: [{ username: payload.data.username }, { NOT: { id: user.id } }],
+      },
+    })
   ) {
     throw new AppError(400, "username already exist");
   }
 
-  if (await prisma.user.findFirst({ where: { email: payload.data.email } })) {
+  if (
+    await prisma.user.findFirst({
+      where: {
+        AND: [{ email: payload.data.email }, { NOT: { id: user.id } }],
+      },
+    })
+  ) {
     throw new AppError(400, "email already exist");
   }
 

@@ -4,6 +4,7 @@ import userRoutes from "../modules/User/user.routes";
 import lostItemRoutes from "../modules/LostItem/lostItem.routes";
 import foundItemRoutes from "../modules/FoundItem/foundItem.routes";
 import claimItemRoutes from "../modules/ClaimItem/claimItem.routes";
+import reportsRoutes from "../modules/reports/reports.routes";
 
 const router = Router();
 
@@ -27,6 +28,10 @@ const moduleRoutes = [
   {
     path: "/claims",
     routes: claimItemRoutes,
+  },
+  {
+    path: "/reports",
+    routes: reportsRoutes,
   },
 ];
 

@@ -1,4 +1,5 @@
 import { Response } from "express";
+import { TMeta } from "../interface/pagination";
 
 type TSendResponseDataProps = {
   statusCode: number;
@@ -6,11 +7,7 @@ type TSendResponseDataProps = {
   message: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
-  meta?: {
-    total: number;
-    page: number;
-    limit: number;
-  };
+  meta?: TMeta;
 };
 const sendResponse = (res: Response, data: TSendResponseDataProps) => {
   res.status(data.statusCode).json({
